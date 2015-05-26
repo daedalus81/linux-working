@@ -1,15 +1,17 @@
 /*
  * Copyright (C) 2011-2014 MediaTek Inc.
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License version 2 as published by the Free Software Foundation.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 as published by the
+ * Free Software Foundation.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <linux/init.h>
@@ -17,19 +19,24 @@
 #include <linux/spinlock.h>
 #include <linux/jiffies.h>
 #include <linux/delay.h>
-#include <asm/localtimer.h>
+
 #if defined(CONFIG_TRUSTONIC_TEE)
 #include <asm/hardware/gic.h>
 #include <mach/mtk_boot_share_page.h>
 #endif
+
+#include <asm/localtimer.h>
 #include <asm/fiq_glue.h>
+
 #include <mach/mt_reg_base.h>
 #include <mach/smp.h>
 #include <mach/sync_write.h>
 #include <mach/hotplug.h>
+
 #ifdef CONFIG_HOTPLUG_WITH_POWER_CTRL
 #include <mach/mt_spm_mtcmos.h>
 #endif
+
 #include <mach/mt_spm_idle.h>
 #include <mach/wd_api.h>
 
