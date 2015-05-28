@@ -9,7 +9,7 @@
 /******************************************************************************
 *
  * REGISTER ADDRESS DEFINATION
- 
+
 ******************************************************************************/
 #define DEVAPC0_D0_APC_0		    ((volatile unsigned int*)(DEVAPC0_AO_BASE+0x0000))
 #define DEVAPC0_D0_APC_1            ((volatile unsigned int*)(DEVAPC0_AO_BASE+0x0004))
@@ -61,7 +61,7 @@
 #define DEVAPC0_D0_VIO_STA_0        ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0400))
 #define DEVAPC0_D0_VIO_STA_1        ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0404))
 #define DEVAPC0_D0_VIO_STA_2        ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0408))
-#define DEVAPC0_D0_VIO_STA_3        ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x040C)) 
+#define DEVAPC0_D0_VIO_STA_3        ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x040C))
 #define DEVAPC0_VIO_DBG0            ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0900))
 #define DEVAPC0_VIO_DBG1            ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0904))
 #define DEVAPC0_DEC_ERR_CON         ((volatile unsigned int*)(DEVAPC0_PD_BASE+0x0F80))

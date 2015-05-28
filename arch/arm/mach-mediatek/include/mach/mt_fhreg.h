@@ -1,17 +1,16 @@
 #ifndef __MT_FHREG_H__
-#define __MT_FHREG_H__ 
+#define __MT_FHREG_H__
 
 #include <linux/bitops.h>
 #include <mach/mt_reg_base.h>
-                            
+
 
 /*--------------------------------------------------------------------------*/
 /* Common Macro                                                             */
 /*--------------------------------------------------------------------------*/
-//#define REG_ADDR(x)                 ((volatile u32*)(FHCTL_BASE + OFFSET_##x))
 #define REG_ADDR(x)                 (FHCTL_BASE + OFFSET_##x)
 
-                            
+
 #define OFFSET_FHDMA_CFG	           0x0000
 #define OFFSET_FHDMA_2G1BASE           0x0004
 #define OFFSET_FHDMA_2G2BASE           0x0008
@@ -84,26 +83,26 @@
 #define OFFSET_FHCTL7_MON              0x00EC
 /* 8127 FHCTL ME */
 
-#define FH_SFSTRX_DYS  (0xFU<<20)
-#define FH_SFSTRX_DTS  (0xFU<<16)
-#define FH_FHCTLX_SRHMODE  (0x1U<<5)
-#define FH_SFSTRX_BP  (0x1U<<4)
-#define FH_SFSTRX_EN  (0x1U<<2)
-#define FH_FRDDSX_EN  (0x1U<<1)
-#define FH_FHCTLX_EN  (0x1U<<0)
-#define FH_FRDDSX_DNLMT   (0xFFU<<16)
-#define FH_FRDDSX_UPLMT  (0xFFU)
-#define FH_FHCTLX_PLL_TGL_ORG  (0x1U<<31)
-#define FH_FHCTLX_PLL_ORG  (0xFFFFFU)
-#define FH_FHCTLX_PAUSE  (0x1U<<31)
-#define FH_FHCTLX_PRD  (0x1U<<30)
-#define FH_SFSTRX_PRD  (0x1U<<29)
-#define FH_FRDDSX_PRD (0x1U<<28)
-#define FH_FHCTLX_STATE  (0xFU<<24)
-#define FH_FHCTLX_PLL_CHG  (0x1U<<21)
-#define FH_FHCTLX_PLL_DDS  (0xFFFFFU)
+#define FH_SFSTRX_DYS				(0xFU<<20)
+#define FH_SFSTRX_DTS				(0xFU<<16)
+#define FH_FHCTLX_SRHMODE			(0x1U<<5)
+#define FH_SFSTRX_BP				(0x1U<<4)
+#define FH_SFSTRX_EN				(0x1U<<2)
+#define FH_FRDDSX_EN				(0x1U<<1)
+#define FH_FHCTLX_EN				(0x1U<<0)
+#define FH_FRDDSX_DNLMT				(0xFFU<<16)
+#define FH_FRDDSX_UPLMT				(0xFFU)
+#define FH_FHCTLX_PLL_TGL_ORG		(0x1U<<31)
+#define FH_FHCTLX_PLL_ORG			(0xFFFFFU)
+#define FH_FHCTLX_PAUSE				(0x1U<<31)
+#define FH_FHCTLX_PRD				(0x1U<<30)
+#define FH_SFSTRX_PRD				(0x1U<<29)
+#define FH_FRDDSX_PRD				(0x1U<<28)
+#define FH_FHCTLX_STATE				(0xFU<<24)
+#define FH_FHCTLX_PLL_CHG			(0x1U<<21)
+#define FH_FHCTLX_PLL_DDS			(0xFFFFFU)
 
-#define REG_FHDMA_CFG	           REG_ADDR(FHDMA_CFG) 
+#define REG_FHDMA_CFG	           REG_ADDR(FHDMA_CFG)
 #define REG_FHDMA_2G1BASE        REG_ADDR(FHDMA_2G1BASE)
 #define REG_FHDMA_2G2BASE        REG_ADDR(FHDMA_2G2BASE)
 #define REG_FHDMA_INTMDBASE      REG_ADDR(FHDMA_INTMDBASE)
@@ -114,8 +113,8 @@
 #define REG_FHSRAM_CON	         REG_ADDR(FHSRAM_CON)
 #define REG_FHSRAM_WR            REG_ADDR(FHSRAM_WR)
 #define REG_FHSRAM_RD            REG_ADDR(FHSRAM_RD)
-#define REG_FHCTL_CFG	           REG_ADDR(FHCTL_CFG) 
-#define REG_FHCTL_CON	           REG_ADDR(FHCTL_CON) 
+#define REG_FHCTL_CFG	           REG_ADDR(FHCTL_CFG)
+#define REG_FHCTL_CON	           REG_ADDR(FHCTL_CON)
 #define REG_FHCTL_2G1_CH         REG_ADDR(FHCTL_2G1_CH)
 #define REG_FHCTL_2G2_CH         REG_ADDR(FHCTL_2G2_CH)
 #define REG_FHCTL_INTMD_CH       REG_ADDR(FHCTL_INTMD_CH)
@@ -168,31 +167,37 @@
 
 static inline unsigned int uffs(unsigned int x)
 {
-    unsigned int r = 1;
+	unsigned int r = 1;
 
-    if (!x)
-        return 0;
-    if (!(x & 0xffff)) {
-        x >>= 16;
-        r += 16;
-    }
-    if (!(x & 0xff)) {
-        x >>= 8;
-        r += 8;
-    }
-    if (!(x & 0xf)) {
-        x >>= 4;
-        r += 4;
-    }
-    if (!(x & 3)) {
-        x >>= 2;
-        r += 2;
-    }
-    if (!(x & 1)) {
-        x >>= 1;
-        r += 1;
-    }
-    return r;
+	if (!x)
+		return 0;
+
+	if (!(x & 0xffff)) {
+		x >>= 16;
+		r += 16;
+	}
+
+	if (!(x & 0xff)) {
+		x >>= 8;
+		r += 8;
+	}
+
+	if (!(x & 0xf)) {
+		x >>= 4;
+		r += 4;
+	}
+
+	if (!(x & 3)) {
+		x >>= 2;
+		r += 2;
+	}
+
+	if (!(x & 1)) {
+		x >>= 1;
+		r += 1;
+	}
+
+	return r;
 }
 #define fh_read8(reg)           readb(reg)
 #define fh_read16(reg)          readw(reg)
@@ -205,17 +210,18 @@ static inline unsigned int uffs(unsigned int x)
 //#define fh_clr_bits(reg,bs)     ((*(volatile u32*)(reg)) &= ~((u32)(bs)))
 
 #define fh_set_field(reg,field,val) \
-    do {	\
-        volatile unsigned int tv = fh_read32(reg);	\
-        tv &= ~(field); \
-        tv |= ((val) << (uffs((unsigned int)field) - 1)); \
-        fh_write32(reg,tv); \
-    } while(0)
+	do {	\
+		volatile unsigned int tv = fh_read32(reg);	\
+		tv &= ~(field); \
+		tv |= ((val) << (uffs((unsigned int)field) - 1)); \
+		fh_write32(reg,tv); \
+	} while(0)
+
 #define fh_get_field(reg,field,val) \
-    do {	\
-        volatile unsigned int tv = fh_read32(reg);	\
-        val = ((tv & (field)) >> (uffs((unsigned int)field) - 1)); \
-    } while(0)
+	do {	\
+		volatile unsigned int tv = fh_read32(reg);	\
+		val = ((tv & (field)) >> (uffs((unsigned int)field) - 1)); \
+	} while(0)
 
 
 

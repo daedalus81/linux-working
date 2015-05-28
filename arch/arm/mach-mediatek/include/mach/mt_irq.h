@@ -72,10 +72,10 @@ enum
 #define MT_APARM_DOMAIN_IRQ_ID              (GIC_PRIVATE_SIGNALS + 94)
 #define MT_APARM_DECERR_IRQ_ID              (GIC_PRIVATE_SIGNALS + 95)
 #if 1 //cliff
-#define MT6582_GPT_IRQ_ID                   (GIC_PRIVATE_SIGNALS + 112)//10.2 update
+#define MT_GPT_IRQ_ID                       (GIC_PRIVATE_SIGNALS + 112)//10.2 update
 #define MT_EINT_IRQ_ID                      (GIC_PRIVATE_SIGNALS + 113)//10.2 update
 #else
-#define MT6582_GPT_IRQ_ID                   (GIC_PRIVATE_SIGNALS + 113)//10.2 update
+#define MT_GPT_IRQ_ID                   (GIC_PRIVATE_SIGNALS + 113)//10.2 update
 #define MT_EINT_IRQ_ID                      (GIC_PRIVATE_SIGNALS + 116)//10.2 update
 #endif
 #define MT6582_PMIC_WRAP_IRQ_ID             (GIC_PRIVATE_SIGNALS + 115)//0x80
@@ -152,7 +152,7 @@ enum
 #define MT6582_DISP_SMI_LARB0_IRQ_ID      (GIC_PRIVATE_SIGNALS+162)
 #define MT_CIRQ_IRQ_ID                      (GIC_PRIVATE_SIGNALS+187)
 #endif
-#define MT6582_APARM_GPTTIMER_IRQ_LINE      MT6582_GPT_IRQ_ID
+#define MT_APARM_GPTTIMER_IRQ_LINE      MT_GPT_IRQ_ID
 
 // MT6582 Wifi AHB Slave HIF
 #define MT6582_AHB_SLAVE_HIF_IRQ_ID         (GIC_PRIVATE_SIGNALS + 160)

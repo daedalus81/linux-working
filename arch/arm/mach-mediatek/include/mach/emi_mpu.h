@@ -45,16 +45,47 @@
 enum
 {
     /* apmcu */
-    MST_ID_APMCU_0, MST_ID_APMCU_1, MST_ID_APMCU_2, MST_ID_APMCU_3, MST_ID_APMCU_4,
+    MST_ID_APMCU_0,
+    MST_ID_APMCU_1,
+    MST_ID_APMCU_2,
+    MST_ID_APMCU_3,
+    MST_ID_APMCU_4,
     /* MM */
-    MST_ID_MM_0, MST_ID_MM_1, MST_ID_MM_2, MST_ID_MM_3, MST_ID_MM_4, MST_ID_MM_5, MST_ID_MM_6,
+    MST_ID_MM_0,
+    MST_ID_MM_1,
+    MST_ID_MM_2,
+    MST_ID_MM_3,
+    MST_ID_MM_4,
+    MST_ID_MM_5,
+    MST_ID_MM_6,
     /* Periperal */
-    MST_ID_PERI_0, MST_ID_PERI_1, MST_ID_PERI_2, MST_ID_PERI_3, MST_ID_PERI_4, MST_ID_PERI_5, MST_ID_PERI_6, MST_ID_PERI_7, MST_ID_PERI_8,
-    MST_ID_PERI_9, MST_ID_PERI_10, MST_ID_PERI_11, MST_ID_PERI_12, MST_ID_PERI_13,
+    MST_ID_PERI_0,
+    MST_ID_PERI_1,
+    MST_ID_PERI_2,
+    MST_ID_PERI_3,
+    MST_ID_PERI_4,
+    MST_ID_PERI_5,
+    MST_ID_PERI_6,
+    MST_ID_PERI_7,
+    MST_ID_PERI_8,
+    MST_ID_PERI_9,
+    MST_ID_PERI_10,
+    MST_ID_PERI_11,
+    MST_ID_PERI_12,
+    MST_ID_PERI_13,
     /* Modem */
-    MST_ID_MDMCU_0, MST_ID_MDMCU_1, MST_ID_MDMCU_2,
+    MST_ID_MDMCU_0,
+    MST_ID_MDMCU_1,
+    MST_ID_MDMCU_2,
     /* Modem HW (2G/3G) */
-    MST_ID_MDHW_0, MST_ID_MDHW_1, MST_ID_MDHW_2, MST_ID_MDHW_3, MST_ID_MDHW_4, MST_ID_MDHW_5, MST_ID_MDHW_6, MST_ID_MDHW_7,
+    MST_ID_MDHW_0,
+    MST_ID_MDHW_1,
+    MST_ID_MDHW_2,
+    MST_ID_MDHW_3,
+    MST_ID_MDHW_4,
+    MST_ID_MDHW_5,
+    MST_ID_MDHW_6,
+    MST_ID_MDHW_7,
     MST_INVALID,
     NR_MST,
 };
@@ -83,11 +114,31 @@ enum
     MASTER_ALL = 7
 };
 
+struct mst_tbl_entry
+{
+    u32 master;
+    u32 port;
+    u32 id_mask;
+    u32 id_val;
+    char *name;
+};
+
+struct emi_mpu_notifier_block
+{
+    struct list_head list;
+    emi_mpu_notifier notifier;
+};
+
 typedef void (*emi_mpu_notifier)(u32 addr, int wr_vio);
 
 #define SET_ACCESS_PERMISSON(d3, d2, d1, d0) (((d3) << 9) | ((d2) << 6) | ((d1) << 3) | (d0))
 
-extern int emi_mpu_set_region_protection(unsigned int start_addr, unsigned int end_addr, int region, unsigned int access_permission);
-extern int emi_mpu_notifier_register(int master, emi_mpu_notifier notifider);
+extern int emi_mpu_set_region_protection(unsigned int start_addr,
+		unsigned int end_addr,
+		int region,
+		unsigned int access_permission);
+
+extern int emi_mpu_notifier_register(int master,
+		emi_mpu_notifier notifider);
 
 #endif  /* !__MT_EMI_MPU_H */

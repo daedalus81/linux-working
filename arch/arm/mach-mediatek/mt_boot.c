@@ -63,19 +63,18 @@ static struct meta_driver meta_com_id_info =
 
 static ssize_t boot_show(struct kobject *kobj, struct attribute *a, char *buf)
 {
-	if (!strncmp(a->name, INFO_SYSFS_ATTR, strlen(INFO_SYSFS_ATTR)))
-	{
-		return sprintf(buf, "%04X%04X%04X%04X %04X %04X\n", get_chip_code(), get_chip_hw_subcode(),
+	if (!strncmp(a->name, INFO_SYSFS_ATTR, strlen(INFO_SYSFS_ATTR))) {
+		return sprintf(buf, "%04X%04X%04X%04X %04X %04X\n",
+				get_chip_code(), get_chip_hw_subcode(),
 				get_chip_hw_ver_code(), get_chip_sw_ver_code(),
 				mt_get_chip_sw_ver(), mt_get_chip_id());
-	}
-	else
-	{
+	} else {
 		return sprintf(buf, "%d\n", get_boot_mode());
 	}
 }
 
-static ssize_t boot_store(struct kobject *kobj, struct attribute *a, const char *buf, size_t count)
+static ssize_t boot_store(struct kobject *kobj, struct attribute *a,
+		const char *buf, size_t count)
 {
 	return count;
 }
@@ -123,36 +122,36 @@ static struct device *boot_device;
 unsigned int get_chip_code(void)
 {
 #ifdef CONFIG_MTK_IN_HOUSE_TEE_SUPPORT
-	return *(unsigned int*)(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000000);
+	return readl(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000000);
 #else
-	return DRV_Reg32(APHW_CODE);
+	return readl(APHW_CODE);
 #endif
 }
 
 unsigned int get_chip_hw_ver_code(void)
 {
 #ifdef CONFIG_MTK_IN_HOUSE_TEE_SUPPORT
-	return *(unsigned int*)(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000008);
+	return readl(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000008);
 #else
-	return DRV_Reg32(APHW_VER);
+	return readl(APHW_VER);
 #endif
 }
 
 unsigned int get_chip_sw_ver_code(void)
 {
 #ifdef CONFIG_MTK_IN_HOUSE_TEE_SUPPORT
-	return *(unsigned int*)(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x0000000c);
+	return readl(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x0000000c);
 #else
-	return DRV_Reg32(APSW_VER);
+	return readl(APSW_VER);
 #endif
 }
 
 unsigned int get_chip_hw_subcode(void)
 {
 #ifdef CONFIG_MTK_IN_HOUSE_TEE_SUPPORT
-	return *(unsigned int*)(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000004);
+	return readl(BOOT_SHARE_BASE+BOOT_SHARE_DEV_INFO_OFST+0x00000004);
 #else
-	return DRV_Reg32(APHW_SUBCODE);
+	return readl(APHW_SUBCODE);
 #endif
 }
 
@@ -168,8 +167,9 @@ CHIP_SW_VER mt_get_chip_sw_ver(void)
 	return (CHIP_SW_VER)get_chip_sw_ver_code();
 }
 
-bool com_is_enable(void)  // usb android will check whether is com port enabled default. in normal boot it is default enabled.
-{
+// usb android will check whether is com port enabled default.
+// in normal boot it is default enabled.
+bool com_is_enable(void) {
 	if(get_boot_mode() == NORMAL_BOOT)
 	{
 		return false;
@@ -201,7 +201,8 @@ static ssize_t meta_com_type_show(struct device_driver *driver, char *buf)
 	return sprintf(buf, "%d\n", g_meta_com_type);
 }
 
-static ssize_t meta_com_type_store(struct device_driver *driver, const char *buf, size_t count)
+static ssize_t meta_com_type_store(struct device_driver *driver,
+		const char *buf, size_t count)
 {
 	/*Do nothing*/
 	return count;
@@ -215,7 +216,8 @@ static ssize_t meta_com_id_show(struct device_driver *driver, char *buf)
 	return sprintf(buf, "%d\n", g_meta_com_id);
 }
 
-static ssize_t meta_com_id_store(struct device_driver *driver, const char *buf, size_t count)
+static ssize_t meta_com_id_store(struct device_driver *driver,
+		const char *buf, size_t count)
 {
 	/*Do nothing*/
 	return count;
@@ -250,47 +252,46 @@ static int __init boot_mod_init(void)
 		return (int)boot_class;
 	}
 
-	boot_device = device_create(boot_class, NULL, boot_dev_num, NULL, BOOT_DEV_NAME);
+	boot_device = device_create(boot_class, NULL, boot_dev_num,
+			NULL, BOOT_DEV_NAME);
 	if (IS_ERR(boot_device)) {
 		printk("[%s] fail to create device\n",MOD);
 		return (int)boot_device;
 	}
 
 	/* add kobject */
-	ret = kobject_init_and_add(&boot_kobj, &boot_ktype, &(boot_device->kobj), BOOT_SYSFS);
+	ret = kobject_init_and_add(&boot_kobj, &boot_ktype,
+			&(boot_device->kobj), BOOT_SYSFS);
 	if (ret < 0) {
 		printk("[%s] fail to add kobject\n",MOD);
 		return ret;
 	}
 
-	printk("[%s] CHIP = 0x%04x 0x%04x\n", MOD, get_chip_code(), get_chip_hw_subcode());
+	printk("[%s] CHIP = 0x%04x 0x%04x\n",
+			MOD, get_chip_code(), get_chip_hw_subcode());
 
-	if(bm == META_BOOT || bm == ADVMETA_BOOT || bm == ATE_FACTORY_BOOT || bm == FACTORY_BOOT)
-	{
+	if(bm == META_BOOT || bm == ADVMETA_BOOT
+			|| bm == ATE_FACTORY_BOOT
+			|| bm == FACTORY_BOOT) {
 		/* register driver and create sysfs files */
 		ret = driver_register(&meta_com_type_info.driver);
 		if (ret)
-		{
-			printk("fail to register META COM TYPE driver\n");
+			printk("Cannot register META COM TYPE driver\n");
 		}
-		ret = driver_create_file(&meta_com_type_info.driver, &driver_attr_meta_com_type_info);
+		ret = driver_create_file(&meta_com_type_info.driver,
+				&driver_attr_meta_com_type_info);
 		if (ret)
-		{
-			printk("[BOOT INIT] Fail to create META COM TPYE sysfs file\n");
-		}
+			printk("[BOOT INIT] Cannot create META COM TPYE sysfs\n");
 
 		ret = driver_register(&meta_com_id_info.driver);
 		if (ret)
-		{
 			printk("fail to register META COM ID driver\n");
-		}
-		ret = driver_create_file(&meta_com_id_info.driver, &driver_attr_meta_com_id_info);
-		if (ret)
-		{
-			printk("[BOOT INIT] Fail to create META COM ID sysfs file\n");
-		}
-	}
 
+		ret = driver_create_file(&meta_com_id_info.driver,
+				&driver_attr_meta_com_id_info);
+		if (ret)
+			printk("[BOOT INIT]Cannot create META COM ID sysfs\n");
+	}
 	return 0;
 }
 
