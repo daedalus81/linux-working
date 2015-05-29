@@ -505,6 +505,152 @@ enum CKGEN_CLK {
 	CKGEN_CLK_END,
 };
 
+struct pll;
+struct pll_ops {
+	int (*get_state)(struct pll *pll);
+	void (*enable)(struct pll *pll);
+	void (*disable)(struct pll *pll);
+	void (*fsel)(struct pll *pll, unsigned int value);
+	int (*dump_regs)(struct pll *pll, unsigned int *ptr);
+	unsigned int (*vco_calc)(struct pll *pll);
+	int (*hp_enable)(struct pll *pll);
+	int (*hp_disable)(struct pll *pll);
+#if CLKMGR_8127
+	unsigned int (*get_postdiv)(struct pll *pll);
+	void (*set_postdiv)(struct pll *pll, unsigned int postdiv);
+	unsigned int (*get_pcw)(struct pll *pll);
+	void (*set_pcw)(struct pll *pll, unsigned int pcw);
+	int (*set_freq)(struct pll *pll, unsigned int freq);
+#endif /* CLKMGR_8127 */
+};
+
+struct pll {
+	const char *name;
+	int type;
+	int mode;
+	int feat;
+	int state;
+	unsigned int cnt;
+	unsigned int en_mask;
+	unsigned int base_addr;
+	unsigned int pwr_addr;
+	struct pll_ops *ops;
+	unsigned int hp_id;
+	int hp_switch;
+#ifdef CONFIG_CLKMGR_STAT
+	struct list_head head;
+#endif
+};
+
+
+struct subsys;
+struct subsys_ops {
+	int (*enable)(struct subsys *sys);
+	int (*disable)(struct subsys *sys);
+	int (*get_state)(struct subsys *sys);
+	int (*dump_regs)(struct subsys *sys, unsigned int *ptr);
+};
+
+struct subsys {
+	const char *name;
+	int type;
+	int force_on;
+	unsigned int cnt;
+	unsigned int state;
+	unsigned int default_sta;
+	unsigned int sta_mask;  /* mask in PWR_STATUS */
+	unsigned int ctl_addr;
+	struct subsys_ops *ops;
+	struct cg_grp *start;
+	unsigned int nr_grps;
+	struct clkmux *mux;
+#ifdef CONFIG_CLKMGR_STAT
+	struct list_head head;
+#endif
+};
+
+
+struct clkmux;
+struct clkmux_ops {
+	void (*sel)(struct clkmux *mux, unsigned int clksrc);
+	void (*enable)(struct clkmux *mux);
+	void (*disable)(struct clkmux *mux);
+};
+
+struct clkmux {
+	const char *name;
+	unsigned int cnt;
+	unsigned int base_addr;
+	unsigned int sel_mask;
+	unsigned int pdn_mask;
+	unsigned int offset;
+	unsigned int nr_inputs;
+	struct clkmux_ops *ops;
+	struct clkmux *parent;
+	struct clkmux *siblings;
+	struct pll *pll;
+#ifdef CONFIG_CLKMGR_STAT
+	struct list_head head;
+#endif
+};
+
+
+struct cg_grp;
+struct cg_grp_ops {
+	int (*prepare)(struct cg_grp *grp);
+	int (*finished)(struct cg_grp *grp);
+	unsigned int (*get_state)(struct cg_grp *grp);
+	int (*dump_regs)(struct cg_grp *grp, unsigned int *ptr);
+};
+
+struct cg_grp {
+	const char *name;
+	unsigned int set_addr;
+	unsigned int clr_addr;
+	unsigned int sta_addr;
+	unsigned int mask;
+	unsigned int state;
+	struct cg_grp_ops *ops;
+	struct subsys *sys;
+};
+
+
+struct cg_clk;
+struct cg_clk_ops {
+	int (*get_state)(struct cg_clk *clk);
+	int (*check_validity)(struct cg_clk *clk); /* 1: valid, 0: invalid */
+	int (*enable)(struct cg_clk *clk);
+	int (*disable)(struct cg_clk *clk);
+};
+
+struct cg_clk {
+	int cnt;
+	unsigned int state;
+	unsigned int mask;
+	int force_on;
+	struct cg_clk_ops *ops;
+	struct cg_grp *grp;
+	struct clkmux *mux;
+	struct cg_clk *parent;
+#if CLKMGR_8127
+	const char *name;
+#endif /* CLKMGR_8127 */
+#ifdef CONFIG_CLKMGR_STAT
+	struct list_head head;
+#endif
+};
+
+
+#ifdef CONFIG_CLKMGR_STAT
+struct stat_node {
+	struct list_head link;
+	unsigned int cnt_on;
+	unsigned int cnt_off;
+	char name[0];
+};
+#endif
+
+
 
 #if CLKMGR_EXT
 

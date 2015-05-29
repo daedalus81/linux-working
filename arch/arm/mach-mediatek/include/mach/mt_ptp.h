@@ -92,7 +92,7 @@
 #define PTP_GET_REAL_VAL            (1)
 #define SET_PMIC_VOLT               (1)
 
-#define ptp_read(addr)              (*(volatile u32 *)(addr))
+#define ptp_read(addr)              readl(addr)
 #define ptp_write(addr, val)        mt65xx_reg_sync_writel(val, addr)
 
 #define ptp_emerg(fmt, args...)     printk(KERN_EMERG "[PTP] " fmt, ##args)
@@ -115,7 +115,7 @@ typedef struct {
     unsigned int ADC_CALI_EN;
     unsigned int PTPINITEN;
     unsigned int PTPMONEN;
-    
+
     unsigned int MDES;
     unsigned int BDES;
     unsigned int DCCONFIG;

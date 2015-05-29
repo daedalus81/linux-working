@@ -6,7 +6,6 @@
 
 #define CAM_BASE                0xF5004000
 
-
 /* APB Module usb2 */
 #define	PERI_USB0_DCM           (USB_BASE+0x700)
 
@@ -140,7 +139,9 @@
 #define ISP_DCM                 (1U << 6)
 #define VDE_DCM                 (1U << 7)
 #define TOPCKGEN_DCM            (1U << 8)
-#define ALL_DCM                 (CPU_DCM|IFR_DCM|PER_DCM|SMI_DCM|MFG_DCM|DIS_DCM|ISP_DCM|VDE_DCM|TOPCKGEN_DCM)
+#define ALL_DCM                 ( CPU_DCM|IFR_DCM|PER_DCM	\
+								|SMI_DCM|MFG_DCM|DIS_DCM	\
+								|ISP_DCM|VDE_DCM|TOPCKGEN_DCM)
 #define NR_DCMS                 (0x9)
 
 
