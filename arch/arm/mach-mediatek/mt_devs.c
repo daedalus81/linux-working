@@ -6,34 +6,33 @@
 #include <linux/delay.h>
 #include <linux/platform_device.h>
 #include <linux/memblock.h>
-#include <asm/setup.h>
-#include <asm/mach/arch.h>
 #include <linux/sysfs.h>
-#include <asm/io.h>
 #include <linux/spi/spi.h>
 #include <linux/amba/bus.h>
 #include <linux/amba/clcd.h>
-#include <linux/musb/musb.h>
-#include <linux/musbfsh.h>
+#include <linux/usb/musb.h>
+
+#include <asm/io.h>
+#include <asm/setup.h>
+#include <asm/mach/arch.h>
+
+//#include <linux/musbfsh.h>
 #include "mach/memory.h"
 #include "mach/irqs.h"
 #include <mach/mt_reg_base.h>
 #include <mach/devs.h>
 #include <mach/mt_boot.h>
-#include <linux/version.h>
 #include <mach/mtk_ccci_helper.h>
 #include <mach/mtk_eemcs_helper.h>
-#include <mach/mtk_memcfg.h>
+//#include <mach/mtk_memcfg.h>
 #include <mach/dfo_boot.h>
 #include <mach/dfo_boot_default.h>
 #include <mach/board.h>
-#include <linux/aee.h>
-#include <linux/mrdump.h>
+//#include <linux/mrdump.h>
 #ifdef CONFIG_MTK_MTD_NAND
 #include <mach/nand_device_list.h>
 #endif
 
-extern BOOTMODE get_boot_mode(void);
 extern u32 get_devinfo_with_index(u32 index);
 extern u32 g_devinfo_data[];
 extern u32 g_devinfo_data_size;
@@ -66,6 +65,8 @@ static struct platform_device mtk_device_btif = {
 };
 
 extern unsigned long max_pfn;
+
+resource_size_t kernel_mem_sz = 0x0;       // kernel_mem_sz is inited in mt_fixup
 
 
 #if defined(CONFIG_MTK_FB)
@@ -314,21 +315,6 @@ static int __init parse_tag_videofb_fixup(const struct tag *tags)
 	return 0;
 }
 
-static int __init parse_tag_devinfo_data_fixup(const struct tag *tags)
-{
-	int i=0;
-	int size = tags->u.devinfo_data.devinfo_data_size;
-	for (i=0;i<size;i++){
-		g_devinfo_data[i] = tags->u.devinfo_data.devinfo_data[i];
-	}
-
-	/* print chip id for debugging purpose */
-	printk("tag_devinfo_data_rid, index[%d]:0x%x\n", 12,g_devinfo_data[12]);
-	printk("tag_devinfo_data size:%d\n", size);
-	g_devinfo_data_size = size;
-	return 0;
-}
-
 #ifdef CONFIG_MTK_MTD_NAND
 int __init parse_tag_partition_fixup(const struct tag *tags)
 {
@@ -374,8 +360,7 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 	struct tag *reserved_mem_bank_tag = NULL;
 	struct tag *none_tag = NULL;
 
-	resource_size_t max_limit_size = CONFIG_MAX_DRAM_SIZE_SUPPORT -
-		RESERVED_MEM_MODEM;
+	resource_size_t max_limit_size = CONFIG_MAX_DRAM_SIZE_SUPPORT;
 	resource_size_t avail_dram = 0;
 	unsigned char md_inf_from_meta[4] = {0};
 #ifdef MTK_TABLET_PLATFORM
@@ -427,58 +412,22 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 		}
 		else if (tags->hdr.tag == ATAG_CMDLINE) {
 			cmdline_tag = tags;
-		} else if (tags->hdr.tag == ATAG_BOOT) {
-			g_boot_mode = tags->u.boot.bootmode;
 		} else if (tags->hdr.tag == ATAG_VIDEOLFB) {
 			parse_tag_videofb_fixup(tags);
-		}else if (tags->hdr.tag == ATAG_DEVINFO_DATA){
-			parse_tag_devinfo_data_fixup(tags);
-		}
-		else if(tags->hdr.tag == ATAG_META_COM)
-		{
-			g_meta_com_type = tags->u.meta_com.meta_com_type;
-			g_meta_com_id = tags->u.meta_com.meta_com_id;
-		}
 #ifdef CONFIG_MTK_MTD_NAND
-		else if(tags->hdr.tag == ATAG_OTP_INFO)
-		{
+		} else if(tags->hdr.tag == ATAG_OTP_INFO) {
 			parse_tag_partition_fixup(tags);
 			printk("\n <bayi> Parse tag for partition	\n");
-		}
-		else if(tags->hdr.tag == ATAG_BMT_INFO)
-		{
+		} else if(tags->hdr.tag == ATAG_BMT_INFO) {
 			parse_tag_partition_fixup(tags);
 			printk("\n <bayi> Parse tag for BMT \n");
-		}
-
-		else if(tags->hdr.tag == ATAG_FLASH_NUMBER_INFO)
-		{
+		} else if(tags->hdr.tag == ATAG_FLASH_NUMBER_INFO) {
 			parse_tag_flashnum_fixup(tags);
 			printk("\n <bayi> Parse tag flash number	\n");
-		}
-		else if(tags->hdr.tag == ATAG_FLASH_INFO)
-		{
+		} else if(tags->hdr.tag == ATAG_FLASH_INFO) {
 			parse_tag_flash_fixup(tags);
 			printk("\n <bayi> Parse tag flash infomation	\n");
-		}
 #endif
-		else if (tags->hdr.tag == ATAG_DFO_DATA) {
-			parse_ccci_dfo_setting(&tags->u.dfo_data, DFO_BOOT_COUNT);
-			parse_eemcs_dfo_setting(&tags->u.dfo_data, DFO_BOOT_COUNT);
-#if defined(CONFIG_MTK_FB) && (1 == CONFIG_MTK_FB)
-			mtkfb_parse_dfo_setting(&tags->u.dfo_data, DFO_BOOT_COUNT);
-#endif
-		}
-		else if(tags->hdr.tag == ATAG_MDINFO_DATA) {
-			printk(KERN_ALERT "Get MD inf from META\n");
-			printk(KERN_ALERT "md_inf[0]=%d\n",tags->u.mdinfo_data.md_type[0]);
-			printk(KERN_ALERT "md_inf[1]=%d\n",tags->u.mdinfo_data.md_type[1]);
-			printk(KERN_ALERT "md_inf[2]=%d\n",tags->u.mdinfo_data.md_type[2]);
-			printk(KERN_ALERT "md_inf[3]=%d\n",tags->u.mdinfo_data.md_type[3]);
-			md_inf_from_meta[0]=tags->u.mdinfo_data.md_type[0];
-			md_inf_from_meta[1]=tags->u.mdinfo_data.md_type[1];
-			md_inf_from_meta[2]=tags->u.mdinfo_data.md_type[2];
-			md_inf_from_meta[3]=tags->u.mdinfo_data.md_type[3];
 		}
 	}
 
@@ -500,6 +449,7 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 	}
 #endif
 
+#if 0
 	if ((g_boot_mode == META_BOOT) || (g_boot_mode == ADVMETA_BOOT)) {
 		/*
 		 * Always use default dfo setting in META mode.
@@ -511,7 +461,7 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 		parse_eemcs_dfo_setting(&dfo_boot_default, DFO_BOOT_COUNT);
 		parse_ext_meta_md_setting(md_inf_from_meta);
 	}
-
+#endif
 	kernel_mem_sz = avail_dram; // keep the DRAM size (limited by CONFIG_MAX_DRAM_SIZE_SUPPORT)
 	/*
 	 * If the maximum memory size configured in kernel
@@ -519,7 +469,7 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 	 * Still limit the maximum memory size but use the FB
 	 * initialized by BL
 	 */
-	if (bl_mem_sz >= (CONFIG_MAX_DRAM_SIZE_SUPPORT - RESERVED_MEM_MODEM)) {
+	if (bl_mem_sz >= CONFIG_MAX_DRAM_SIZE_SUPPORT) {
 		use_bl_fb++;
 	}
 
@@ -545,10 +495,12 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
 #endif
 
 		cmdline_filter(cmdline_tag, *cmdline);
+#if 0
 		if ((br_ptr = strstr(*cmdline, "boot_reason=")) != 0) {
 			/* get boot reason */
 			g_boot_reason = br_ptr[12] - '0';
 		}
+#endif
 		/* Use the default cmdline */
 		memcpy((void*)cmdline_tag,
 				(void*)tag_next(cmdline_tag),
@@ -945,7 +897,7 @@ __init int mt_board_init(void)
 // return the actual physical DRAM size
 unsigned int mtk_get_max_DRAM_size(void)
 {
-	return kernel_mem_sz + RESERVED_MEM_MODEM;
+	return kernel_mem_sz;
 }
 
 resource_size_t get_actual_DRAM_size(void)
@@ -979,9 +931,6 @@ void __weak eemcs_memory_reserve(void)
 
 void mt_reserve(void)
 {
-	//    aee_dram_console_reserve_memory();
-	mrdump_reserve_memory();
-
 #if defined(CONFIG_MTK_RAM_CONSOLE_USING_DRAM)
 	memblock_reserve(CONFIG_MTK_RAM_CONSOLE_DRAM_ADDR, CONFIG_MTK_RAM_CONSOLE_DRAM_SIZE);
 #endif

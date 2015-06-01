@@ -13,7 +13,6 @@ void __init mt_timer_init(void)
 {
 	int i;
 	struct mt_clock *clock;
-	int err;
 
 	for (i = 0; i < ARRAY_SIZE(mt6582_clocks); i++) {
 		clock = mt6582_clocks[i];
@@ -37,6 +36,6 @@ void __init mt_timer_init(void)
 
 #ifndef CONFIG_MT7623_FPGA
 	if (generic_timer_register())
-		pr_err("generic_timer_register failed, err=%d\n", err);
+		pr_err("generic_timer_register failed \n");
 #endif
 }

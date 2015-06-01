@@ -21,7 +21,7 @@
  * Define constants.
  */
 
-#define PHYS_OFFSET 0x80000000
+//#define PHYS_OFFSET 0x80000000
 
 /*
  * Define macros.

@@ -4,7 +4,6 @@
 #include <generated/autoconf.h>
 #include <linux/pm.h>
 //#include <mach/mt6575.h>
-#include <board-custom.h>
 
 typedef void (*sdio_irq_handler_t)(void*);  /* external irq handler */
 typedef void (*pm_callback_t)(pm_message_t state, void *data);
@@ -78,9 +77,9 @@ struct msdc_hw {
     unsigned long  flags;            /* hardware capability flags */
     unsigned long  data_pins;        /* data pins */
     unsigned long  data_offset;      /* data address offset */
-	
+
     unsigned char  ddlsel;    // data line delay line fine tune selecion
-	unsigned char  rdsplsel;  // read: data line rising or falling latch fine tune selection 
+	unsigned char  rdsplsel;  // read: data line rising or falling latch fine tune selection
 	unsigned char  wdsplsel;  // write: data line rising or falling latch fine tune selection
 
 	unsigned char  dat0rddly; //read; range: 0~31
@@ -105,8 +104,8 @@ struct msdc_hw {
     struct msdc_ett_settings *ett_settings;
     unsigned int ett_count;
 	unsigned long  host_function;	 /* define host function*/
-	bool		   boot;			 /* define boot host*/ 
-	bool		   cd_level;		 /* card detection level*/	
+	bool		   boot;			 /* define boot host*/
+	bool		   cd_level;		 /* card detection level*/
     /* config gpio pull mode */
     void (*config_gpio_pin)(int type, int pull);
 
@@ -124,7 +123,7 @@ struct msdc_hw {
     void (*enable_cd_eirq)(void);
     void (*disable_cd_eirq)(void);
     int  (*get_cd_status)(void);
-    
+
     /* power management callback for external module */
     void (*register_pm)(pm_callback_t pm_cb, void *data);
 };
@@ -152,8 +151,8 @@ extern struct mt3326_gps_hardware mt3326_gps_hw;
 
 /* NAND driver */
 struct mtk_nand_host_hw {
-    unsigned int nfi_bus_width;		    /* NFI_BUS_WIDTH */ 
-	unsigned int nfi_access_timing;		/* NFI_ACCESS_TIMING */  
+    unsigned int nfi_bus_width;		    /* NFI_BUS_WIDTH */
+	unsigned int nfi_access_timing;		/* NFI_ACCESS_TIMING */
 	unsigned int nfi_cs_num;			/* NFI_CS_NUM */
 	unsigned int nand_sec_size;			/* NAND_SECTOR_SIZE */
 	unsigned int nand_sec_shift;		/* NAND_SECTOR_SHIFT */

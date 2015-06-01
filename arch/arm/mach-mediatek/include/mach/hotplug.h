@@ -1,29 +1,23 @@
 #ifndef _HOTPLUG
 #define _HOTPLUG
 
-#include <linux/xlog.h>
 #include <linux/kernel.h>   //printk
 #include <asm/atomic.h>
 #include <mach/mt_reg_base.h>
 
-/* log */
-#define HOTPLUG_LOG_NONE                                0
-#define HOTPLUG_LOG_WITH_XLOG                           1
-#define HOTPLUG_LOG_WITH_PRINTK                         2
+//#define HOTPLUG_DEBUG
 
 #define HOTPLUG_LOG_PRINT                               HOTPLUG_LOG_WITH_PRINTK
 
-#if (HOTPLUG_LOG_PRINT == HOTPLUG_LOG_NONE)
-#define HOTPLUG_INFO(fmt, args...)                    
-#elif (HOTPLUG_LOG_PRINT == HOTPLUG_LOG_WITH_XLOG)
-#define HOTPLUG_INFO(fmt, args...)                      xlog_printk(ANDROID_LOG_INFO, "Power/hotplug", fmt, ##args)
-#elif (HOTPLUG_LOG_PRINT == HOTPLUG_LOG_WITH_PRINTK)
+#if !defined(HOTPLUG_DEBUG)
+#define HOTPLUG_INFO(fmt, args...)
+#else
 #define HOTPLUG_INFO(fmt, args...)                      printk("[Power/hotplug] "fmt, ##args)
 #endif
 
 
 /* profilling */
-//#define CONFIG_HOTPLUG_PROFILING                        
+//#define CONFIG_HOTPLUG_PROFILING
 #define CONFIG_HOTPLUG_PROFILING_COUNT                  100
 
 

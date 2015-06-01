@@ -4,3 +4,22 @@ config ARCH_MEDIATEK
 	select MTK_TIMER
 	help
 	  Support for Mediatek Cortex-A7 Quad-Core-SoC MT6589.
+
+config MT7623
+	bool "Mediatek MT7623 SoC" if ARCH_MULTI_V7
+	select ARM_L1_CACHE_SHIFT_6
+	help
+	  Select if you are using MT7623 based boards
+	  for Cloudkey projects.
+
+config MAX_DRAM_SIZE_SUPPORT
+	hex "The maximum size of the DRAM can be supported in the kernel"
+	default 0x40000000
+	depends on MT7623
+	help
+		Define the maximum size of the kernel can be supported.
+	        If will modify the memory size if it size is smaller than
+                the memory size passed by the boot loader to the MAX_DRAM_SIZE_SUPPORT.
+   		Notice that the maximum DRAM size is including the memory size
+	        reserved for the modem and the PMEM.
+

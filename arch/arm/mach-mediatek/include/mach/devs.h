@@ -2,7 +2,6 @@
 #define __DEVS_H__
 
 #include <linux/platform_device.h>
-#include <board-custom.h>
 #include <mach/board.h>
 
 #define CFG_DEV_UART1

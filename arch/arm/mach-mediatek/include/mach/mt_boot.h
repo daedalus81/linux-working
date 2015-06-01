@@ -1,8 +1,8 @@
- /* 
+ /*
   *
   *
   * Copyright (C) 2008,2009 MediaTek <www.mediatek.com>
-  * Authors: Infinity Chen <infinity.chen@mediatek.com>  
+  * Authors: Infinity Chen <infinity.chen@mediatek.com>
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 #ifndef __MT_BOOT_H__
 #define __MT_BOOT_H__
-#include <mach/mt_boot_common.h>
 
 /*META COM port type*/
  typedef enum
@@ -56,5 +55,5 @@ extern unsigned int get_chip_sw_ver_code(void);
 extern unsigned int mt_get_chip_id(void);
 extern CHIP_SW_VER  mt_get_chip_sw_ver(void);
 
-#endif 
+#endif
 

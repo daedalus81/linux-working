@@ -4,13 +4,13 @@
 #include <linux/interrupt.h>
 #include <linux/cpu.h>
 #include <linux/notifier.h>
-#include <linux/aee.h>
-#include <linux/mtk_ram_console.h>
+//#include <linux/aee.h>
+//#include <linux/mtk_ram_console.h>
 #include <linux/irqchip/arm-gic.h>
 
 #include <asm/mach/irq.h>
 #include <asm/fiq.h>
-#include <asm/fiq_glue.h>
+//#include <asm/fiq_glue.h>
 
 #include <mach/mt_reg_base.h>
 #include <mach/irqs.h>
@@ -20,9 +20,6 @@
 #ifdef CONFIG_MTK_IN_HOUSE_TEE_SUPPORT
 #include <trustzone/kree/tz_irq.h>
 #endif
-
-#define GIC_DIST_IGROUP		(0x080)
-#define GIC_DIST_ACTIVE_SET	(0x300)
 
 #define GIC_ICDISR (GIC_DIST_BASE + 0x80)
 #define GIC_ICDISER0 (GIC_DIST_BASE + 0x100)
@@ -101,7 +98,7 @@ void mt_irq_mask(struct irq_data *data)
 		return ;
 	}
 
-	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_CLEAR + irq / 32 * 4) = mask;
+	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_CLEAR + irq / 32 * 4, mask);
 }
 
 /*
@@ -120,7 +117,7 @@ void mt_irq_unmask(struct irq_data *data)
 		return ;
 	}
 
-	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_SET + irq / 32 * 4) = mask;
+	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_SET + irq / 32 * 4,  mask);
 }
 
 /*
@@ -132,9 +129,9 @@ static void mt_irq_ack(struct irq_data *data)
 	u32 irq = data->irq;
 
 #if defined(CONFIG_FIQ_GLUE) && !defined(CONFIG_MTK_IN_HOUSE_TEE)
-	writel(GIC_CPU_BASE + GIC_CPU_AEOI) = irq;
+	writel(GIC_CPU_BASE + GIC_CPU_AEOI, irq);
 #else
-	writel(GIC_CPU_BASE + GIC_CPU_EOI) = irq;
+	writel(GIC_CPU_BASE + GIC_CPU_EOI, irq);
 #endif
 }
 
@@ -812,7 +809,7 @@ void mt_irq_set_pending_for_sleep(unsigned int irq)
 		return ;
 	}
 
-	writel(GIC_DIST_BASE + GIC_DIST_PENDING_SET + irq / 32 * 4) = mask;
+	writel(GIC_DIST_BASE + GIC_DIST_PENDING_SET + irq / 32 * 4, mask);
 	printk(KERN_CRIT "irq:%d, 0x%x=0x%x\n", irq, GIC_DIST_BASE +
 			GIC_DIST_PENDING_SET + irq / 32 * 4,mask);
 }
@@ -831,7 +828,7 @@ void mt_irq_unmask_for_sleep(unsigned int irq)
 		return ;
 	}
 
-	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_SET + irq / 32 * 4) = mask;
+	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_SET + irq / 32 * 4, mask);
 }
 
 /*
@@ -848,7 +845,7 @@ void mt_irq_mask_for_sleep(unsigned int irq)
 		return ;
 	}
 
-	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_CLEAR + irq / 32 * 4) = mask;
+	writel(GIC_DIST_BASE + GIC_DIST_ENABLE_CLEAR + irq / 32 * 4, mask);
 }
 
 #if defined(CONFIG_FIQ_GLUE)

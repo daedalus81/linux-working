@@ -31,9 +31,11 @@
 #include <asm/mach-types.h>
 #include <asm/hardware/cache-l2x0.h>
 
-#include <asm/rt2880/rt_mmap.h>
 
+#include <mach/rt_mmap.h>
 #include <mach/mt_reg_base.h>
+
+#include <mach/memory.h>
 #include <mach/irqs.h>
 
 extern void arm_machine_restart(char mode, const char *cmd);
@@ -104,7 +106,7 @@ static struct map_desc mt_io_desc[] __initdata =
 		.virtual = SYSRAM_BASE,
 		.pfn = __phys_to_pfn(0x00200000),
 		.length = SZ_128K,
-		.type = MT_MEMORY_NONCACHED
+		.type = MT_MEMORY_RWX_NONCACHED
 	},
 	{
 		.virtual = G3D_CONFIG_BASE,
@@ -148,7 +150,7 @@ static struct map_desc mt_io_desc[] __initdata =
 		.virtual = INTER_SRAM,
 		.pfn = __phys_to_pfn(0x00100000),
 		.length = SZ_64K,
-		.type = MT_MEMORY_NONCACHED
+		.type = MT_MEMORY_RWX_NONCACHED
 	},
 	{
 		.virtual = HIFSYS_BASE,
@@ -177,6 +179,7 @@ void __init mt_map_io(void)
 	iotable_init(mt_io_desc, ARRAY_SIZE(mt_io_desc));
 }
 
+#if 0
 MACHINE_START(MT7623, "MT7623")
 .atag_offset    = 0x00000100,
 	.map_io         = mt_map_io,
@@ -191,3 +194,4 @@ MACHINE_START(MT7623, "MT7623")
 	.restart        = arm_machine_restart,
 	.reserve        = mt_reserve,
 	MACHINE_END
+#endif

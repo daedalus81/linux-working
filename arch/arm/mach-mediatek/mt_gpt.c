@@ -8,11 +8,12 @@
 #include <linux/syscore_ops.h>
 #include <linux/seq_file.h>
 
-#include <asm/sched_clock.h>
+#include <linux/sched_clock.h>
 
 #include <mach/mt_reg_base.h>
 #include <mach/mt_gpt.h>
 #include <mach/mt_timer.h>
+#include <mach/mt_irq.h>
 #include <mach/irqs.h>
 
 //#define CONFIG_CLKSRC_64_BIT
@@ -623,7 +624,7 @@ struct mt_clock mtk_gpt =
 		.flags      = IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL |IRQF_TRIGGER_LOW,
 		.handler    = gpt_handler,
 		.dev_id     = &mtk_gpt.clockevent,
-		.irq        = MT_APARM_GPTTIMER_IRQ_LINE,
+		.irq        = MT6582_APARM_GPTTIMER_IRQ_LINE,
 	},
 	.init_func = mt_gpt_init,
 };
@@ -667,7 +668,7 @@ static inline void setup_clksrc(void)
 
 	setup_gpt_dev_locked(dev, GPT_FREE_RUN, GPT_CLK_SRC_SYS, GPT_CLK_DIV_1,
 			0, NULL, 0);
-	setup_sched_clock((void *)mt_read_sched_clock, 32, SYS_CLK_RATE);
+	sched_clock_register((u64 *)mt_read_sched_clock, 32, SYS_CLK_RATE);
 }
 #else
 

@@ -6,7 +6,7 @@
 #include <linux/clockchips.h>
 #include <linux/interrupt.h>
 
-#include <asm/localtimer.h>
+//#include <asm/localtimer.h>
 
 
 #define read_cntfrq(cntfrq) \
@@ -301,7 +301,7 @@ static int __cpuinit generic_timer_setup(struct clock_event_device *clk)
 	clk->set_next_event = generic_timer_set_next_event;
 	clk->irq = timer_ppi;
 
-	this_cpu_clk = __this_cpu_ptr(timer_evt);
+	this_cpu_clk = raw_cpu_ptr(timer_evt);
 	*this_cpu_clk = clk;
 
 	clockevents_config_and_register(clk, generic_timer_rate,

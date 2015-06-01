@@ -6,6 +6,8 @@
 #include <linux/cpu.h>
 #endif
 
+#include <asm/io.h>
+
 #define UNLOCK_KEY 0xC5ACCE55
 #define HDBGEN (1 << 14)
 #define MDBGEN (1 << 15)
